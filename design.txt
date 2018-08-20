@@ -1,0 +1,166 @@
+Library used: Pygames
+
+This document is used for state design
+
+characters always draw last so doesn't go under background
+
+Game character states:
+
+	operation states
+		canTakeAction
+			false if hitstunned, blocking, knowckdown
+			can only be in 1 hit state at any time
+
+	movement states
+		can move only if canTakeAction == true
+
+
+		still
+
+
+		forewardMove
+		backwardMove
+			0 frame activation, 0 frame timer
+			state != jump, attack, hitstunned, knowckdown, blocking
+
+			if key.pressed == Left || Right 
+				check move direction vs player 2 direction
+				move x, velocity based on foreward/backward
+
+		forewardJump
+		backwardJump
+		verticalJump
+			x frame activation, y frame timer
+			state != jump, attack, hitstunned, knowckdown, blocking
+
+			if key.pressed = jump 
+				check direction condition
+				jump(direction)
+				state == jump
+
+		crouch
+			state != jump, attack, hitstunned, knowckdown, blocking
+
+	attack states:
+		jumpAttack
+		crouchAttack
+		normalAttack
+			state != jump, attack, hitstunned, knowckdown, blocking
+
+			create + draw hurtbox
+			hitDetect(hurtbox vertices, hitbox vertices, hitter)
+				if hit-> hurtter stunned
+
+		grapple
+
+	hit states:
+		hitstunned
+		blocking
+		knockDown
+
+
+	Super?
+		stops all movement, track opponent state and position, modify frame advantage
+
+
+attack moves should be defined in player class, calls only takes button input
+
+
+
+
+	
+
+special moves implementation: 
+	input buffer using circular queue
+	only takes in the pressed events
+
+
+movement logic handling:
+
+	direction -> can be represented in FSM (5 states)
+		condition variables:
+			currentDirection
+				at the end of if statement checks, update position based on currentDirection
+			previousDirection
+
+			curr and prev can never be the same direction
+			curr and prev initialized to 0
+			1 = forward
+			-1 = backward
+
+		INITIAL STATE
+		if prev = 0 and curr = 0
+			if press F
+				curr = 1
+			if press B
+				curr = -1
+			// no release action
+
+		STATE 1
+		elif prev = 0 and curr = 1
+			if release F
+				curr = 0
+
+			if press B
+				prev = curr
+				curr = neg(curr)
+
+			cannot release B, cannot press F
+		STATE 2
+		elif prev = 0 curr = -1
+			same logic as above
+
+		STATE 3
+		elif prev = 1 curr = -1
+			if release B  	(return to state 1)
+				curr = prev
+				prev = 0
+			if release F 	(return to state 2)
+				prev = 0
+
+			if press F 		(go to state 4)
+				prev = curr
+				curr = 1
+
+		elif prev = -1 curr = 1
+			same logic as above
+
+
+
+Game overall logic:
+	init pygames
+	init players
+	while not gameExit
+		take input 
+			left/right directional input
+			attack input
+			jump input 
+
+			control input
+			
+		update 
+		render
+
+
+input handling design:
+	jumping uses the next frame to detect directional action
+		POSSIBLE BUG: jump+direction+attack might become vertical jump + attack
+			solution: extend detection frame to 3?
+
+
+	things to do in input handle
+		left right movement
+		jump
+		crouch
+		attack
+		input buffer update
+		input buffer check
+
+		action priority hierarchy
+			super			(from buffer)
+			special move 	(from buffer)
+			attack 			(priority decided by code order)
+			jump
+			crouch
+			left/right movement
+
