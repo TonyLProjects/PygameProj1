@@ -2,6 +2,10 @@ import sys
 import os
 import pygame
 
+# import inputBuffer
+import inputHandler
+import updater
+import Keybindings as keybinds
 import player
 
 from constants import *
@@ -26,51 +30,38 @@ gameExit = False
 #initialize players and other modules
 p1 = player.Player("default class", 1)
 p2 = player.Player("default class", 2)
-
-
-# inputHandler = InputHandler()
+# p1InputBuffer = inputBuffer()
+# p2InputBuffer = inputBuffer()
 
 
 while not gameExit:
-	pressed = 0
 
-	keys = pygame.key.get_pressed()
-	p1Inputs = []
-		#if p1 or p2's input keys are in 'keys', push it to the input list
-
-	inputHandler.handlePlayerInput(p1Inputs, p1)
-	inputHandler.handlePlayerInput(p2Inputs, p2)
-
-
-	if keys[pygame.K_a]:
-		print('a is pressed')
-
-	if keys[pygame.K_d]:
-		print("d is pressed")
-
-	if keys[pygame.K_a] and keys[pygame.K_d]:
-		print('a and d are pressed')
-
-
+	currentPressedKeys = []
 	events = pygame.event.get()
 	for event in events:
-		# print(event)
-
-		#TODO: define p1/p2Action type
-		# p1Actions = inputHandler.handlePlayerInput(event, p1, 1)
-		# p2Actions = inputHandler.handlePlayerInput(event, p2, 2)
 
 
 		if event.type == pygame.QUIT:
 			gameExit = True
+	# action events handled with KEYDOWN events
+
+
+	# movement handled with pressed keys 
+	keys = pygame.key.get_pressed()
+
+	p1Action = inputHandler.handlePlayerInputs(events, keys, p1.playerGameSide, p1.playerLocationSide)
+	p2Action = inputHandler.handlePlayerInputs(events, keys, p2.playerGameSide, p2.playerLocationSide)
+	# not sure how to design the updater module module
+
+	collisionResult = updater.hurtboxCollisionDetection(p1, p2)
+	updater.update(p1, p1Action, collisionResult)
+	updater.update(p2, p2Action, collisionResult)
+
+
 
 
 	# update(p1, p2, p1Actions, p2Actions)
 	render(p1, p2, gameDisplay)
-
-
-	if pressed > 0:
-		print('end of frame: ' + str(pressed))
 
 	pygame.display.update()
 	pygame.event.pump()

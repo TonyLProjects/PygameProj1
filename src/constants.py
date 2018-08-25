@@ -15,3 +15,20 @@ DEFAULT_P1_XPOS = 200
 DEFAULT_P1_YPOS = 450
 DEFAULT_P2_XPOS = 600
 DEFAULT_P2_YPOS = 450
+
+
+# p1Keybind = {	
+# 			"punch":pygame.K_j,
+# 			"jump": pygame.K_w, 
+# 			"crouch":pygame.K_s, 
+# 			"left":pygame.K_a,
+# 			"right":pygame.K_d
+# 			}
+# p1KeySearch = {
+# 			pygame.K_j:"punch",
+# 			pygame.K_w:"jump" , 
+# 			pygame.K_s:"crouch", 
+# 			pygame.K_a:"left",
+# 			pygame.K_d:"right"
+# }
+

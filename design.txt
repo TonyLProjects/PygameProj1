@@ -1,8 +1,36 @@
 Library used: Pygames
 
-This document is used for state design
 
-characters always draw last so doesn't go under background
+
+Game logic flow:
+	init objects
+	while not end game:
+		take input 
+		process input <- may be mart of update
+		update
+
+take input(events, keydown):
+	return final player action
+	
+
+
+	
+update(player, action)
+	process action(player obj, action)
+		verify action validity
+		if valid-> initialize action 	(else ignore action)
+
+	update frame counters
+	change character states
+		state change from:
+
+		-end of frame timer
+		-hitbox/hurtbox detection
+		-update UI
+
+
+
+	
 
 Game character states:
 
@@ -74,6 +102,7 @@ special moves implementation:
 	input buffer using circular queue
 	only takes in the pressed events
 
+Previous movement design
 
 movement logic handling:
 
@@ -127,20 +156,6 @@ movement logic handling:
 
 
 
-Game overall logic:
-	init pygames
-	init players
-	while not gameExit
-		take input 
-			left/right directional input
-			attack input
-			jump input 
-
-			control input
-			
-		update 
-		render
-
 
 input handling design:
 	jumping uses the next frame to detect directional action
@@ -164,3 +179,8 @@ input handling design:
 			crouch
 			left/right movement
 
+
+input handling flow chart:
+
+	input ->	character command 	->	action processing ->	update character/game
+		 \->	save input to buffer		

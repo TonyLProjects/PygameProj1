@@ -42,9 +42,6 @@ class Player:
 
 		#initialize the rest according to character class
 
-###getter/setter
-	def isInputLocked(self):
-		return inputLock
 
 
 
