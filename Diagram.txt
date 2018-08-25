@@ -1,0 +1,50 @@
+Frame time event scenarios:
+
+
+
+Scenario 1:
+	player initiate attack.
+		3 frame initiation
+		3 frame hitbox duration
+		2 frame recovery
+
+
+	init 							init 					init 			reset
+	attack 							hitbox					rec 
+	____	____	____	____	____	____	____	____	____	____
+	f0		f1		f2		f3		f4		f5		f6		f7		f8		f9
+
+
+
+	each frame:
+		check input
+			enque/dequeue from buffer
+		check hitbox
+		check hurtbox
+
+
+	init attack:
+		player.attack():
+			still takes in input, enqueue to buffer
+			also remove input actions from buffer at regular pace
+			does not issue action from input 
+
+	check hitbox:
+		detectHurtbox(p1):
+			happens regardless of player state (even if already stunned)
+	check hitbox:
+		check during hit-active frames
+
+
+	does not check locationBox
+
+
+	When to run player.tick()? 
+		either:
+			move related frames should not tick on initializing frame
+		or:
+			initialize move with an initializing frame to be ticked on the same frame of initialization
+				in this case, we would tick after initialization of frame
+
+		these two seem like the same thing.
+

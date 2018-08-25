@@ -51,9 +51,9 @@ while not gameExit:
 
 	p1Action = inputHandler.handlePlayerInputs(events, keys, p1.playerGameSide, p1.playerLocationSide)
 	p2Action = inputHandler.handlePlayerInputs(events, keys, p2.playerGameSide, p2.playerLocationSide)
-	# not sure how to design the updater module module
 
-	collisionResult = updater.hurtboxCollisionDetection(p1, p2)
+	collisionResult = updater.hurtBoxCollisionDetection(p1, p2)
+
 	updater.update(p1, p1Action, collisionResult)
 	updater.update(p2, p2Action, collisionResult)
 

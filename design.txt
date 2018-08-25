@@ -1,5 +1,14 @@
 Library used: Pygames
 
+TODO:
+	design player locationBox:
+		similar to hurtbox
+		only check if players are moving forward
+		if player location Box collide, check both player's movement direction
+			if p1->move forward p2->still:
+				move p2 back slowly
+			elif p1->move forward, p2->move forward:
+				both players are still
 
 
 Game logic flow:

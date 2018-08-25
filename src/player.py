@@ -9,14 +9,16 @@ class Player:
 	characterClass = ""
 	playerGameSide = 0
 	forwardVelocity = 1
+	backwardVelocity = 0.5
 	jumpHeight = 1
 	forwardJumpDistance = 1
 	
 #player state related variable attributes
 	healthPoint = 100
+	canInitAction = True
 
 	isBlocking = False
-	isJumping = False
+	isAirborne = False
 	isCrouching = False
 	isAttacking = False
 	isHitStunned = False
@@ -46,65 +48,30 @@ class Player:
 
 
 ###class methods
+	# validity of action is handled in another function
+	def initializeAction(self, action):
+		if action == "forward":
+			self.xPos += self.forwardVelocity
+		if action == "backward":
+			self.xPos -= self.backwardVelocity
+		if action == "crouch":
+			# self.crouch()
+			pass
+		if action == "verticalJump":
+			print("imjumping")
+			# self.verticalJump()
+			pass
+		if action == "forwardJump":
+			# self.forwardJump()
+			pass
+		if action == "backwardJump":
+			# self.backwardJump()
+			pass
+		if action == "punch":
+			# self.punch()
+			pass
 
-	#control character left-right movement behavior including when both L/R keys are pressed
-	#state design see design.txt section [	TODO	]
-	def handleDirectionalMovement(self, event):
+	def tick(self):
 		pass
 
-	#TODO: 
-#	improve readability
-#	code written according to state design in design.txt
-	
-		# x = 400
-		# y = 300
-		# keyHeld = 0
-		# currentDirection = 0
-		# forwardVelocity = 5
-		# backwardVelocity = -5
 
-
-
-		# if keyHeld == 0 and currentDirection == 0:
-		# 	if event.type == pygame.KEYDOWN:
-		# 		if event.key == pygame.K_a:
-		# 			currentDirection = -1
-		# 		elif event.key == pygame.K_d:
-		# 			currentDirection = 1
-		# elif keyHeld == 0 and currentDirection == 1:
-		# 	if event.type == pygame.KEYUP:
-		# 		if event.key == pygame.K_d:
-		# 			currentDirection = 0
-		# 	elif event.type == pygame.KEYDOWN:
-		# 		if event.key == pygame.K_a:
-		# 			keyHeld = currentDirection
-		# 			currentDirection = -1
-		# elif keyHeld == 0 and currentDirection == -1:
-		# 	if event.type == pygame.KEYUP:
-		# 		if event.key == pygame.K_a:
-		# 			currentDirection = 0
-		# 	elif event.type == pygame.KEYDOWN:
-		# 		if event.key == pygame.K_d:
-		# 			keyHeld = currentDirection
-		# 			currentDirection = 1
-		# elif keyHeld == 1 and currentDirection == -1:
-		# 	if event.type == pygame.KEYUP:
-		# 		if event.key == pygame.K_a:
-		# 			currentDirection = keyHeld
-		# 			keyHeld = 0
-		# 		if event.key == pygame.K_d:
-		# 			keyHeld = 0
-		
-		# elif keyHeld == -1 and currentDirection == 1:
-		# 	if event.type == pygame.KEYUP:
-		# 		if event.key == pygame.K_d:
-		# 			currentDirection = keyHeld
-		# 			keyHeld = 0
-		# 		if event.key == pygame.K_a:
-		# 			keyHeld = 0
-		
-
-		# if currentDirection == 1:
-		# 	x += forwardVelocity
-		# elif currentDirection == -1:
-		# 	x += backwardVelocity
