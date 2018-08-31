@@ -36,15 +36,23 @@ Scenario 1:
 		check during hit-active frames
 
 
-	does not check locationBox
+
+When to run player.tick()? 
+
+	initialize move with an initializing frame to be ticked on the same frame of initialization
+		in this case, we would tick after initialization of frame
 
 
-	When to run player.tick()? 
-		either:
-			move related frames should not tick on initializing frame
-		or:
-			initialize move with an initializing frame to be ticked on the same frame of initialization
-				in this case, we would tick after initialization of frame
 
-		these two seem like the same thing.
+When to init action and when to update
+	case 1: init action then tick
+	3 frame att, 3 frame hitbox, 2 frame recovery:
 
+	problem:
+		first frame will not show
+	solution:
+		add an initialization frame to every move
+			+1 frame?
+			
+
+Need an attack status class since too many states with any move

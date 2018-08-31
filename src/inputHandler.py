@@ -52,12 +52,12 @@ def processAttack(keyDownInputs, pressedKeys, playerLocationSide):
 	# if len(keyDownInputs) != 0:
 	# 	print(keyDownInputs)
 
-
+# add attack variety here
 	if 	"punch" in keyDownInputs:
 		if "left" in pressedKeys:
-			return "backPunch"
+			return "punch"
 		if "right" in pressedKeys:
-			return "forwardPunch"
+			return "punch"
 		return "punch"
 	return "noAction"
 	

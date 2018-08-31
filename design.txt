@@ -1,3 +1,6 @@
+
+
+
 Library used: Pygames
 
 TODO:
@@ -193,3 +196,18 @@ input handling flow chart:
 
 	input ->	character command 	->	action processing ->	update character/game
 		 \->	save input to buffer		
+
+
+
+should player hurtbox be constantly calculated or should it be created when an event might trigger hitbox collision?
+
+attack psudo code:
+	in player, attack initiation:
+		change character status to attacking, specify which type
+		init frame counter
+	in update(hurtBoxCollisionDetection() and player.tick()):
+		check frame count and create hitbox/hurtbox according to move
+			usually hitbox does not exist for first few frames(move initiating frames)
+	in render:
+		read player move status and frame counter
+			draw body part according to these info

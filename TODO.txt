@@ -1,0 +1,39 @@
+Done:
+
+	basic input handling
+	action filter
+	left right movement 
+
+
+
+TODO:
+
+	hp interaction
+	player side location detection
+		-am i left or right to the other player
+
+
+	Actions:
+
+		punch
+		crouch
+			FIX CROUCH
+
+		jump attack
+
+	System:
+		frame counter system
+		player.tick(self)
+			apply gravity if airborne
+			if airborne is true and player is on ground
+				slef.airborne = false
+
+
+
+	interaction:
+		game UI
+			hp bars
+			timer
+		hitbox/hurtbox collision
+		movement collision
+

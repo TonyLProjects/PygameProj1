@@ -7,20 +7,28 @@ import inputHandler
 import updater
 import Keybindings as keybinds
 import player
+import vector2d
 
 from constants import *
 
-def render(p1, p2, display):
+def renderDisplay(display):
 	gameDisplay.fill(WHITE)	
-	pygame.draw.rect(display, BLACK, [p1.xPos, p1.yPos, 10, 10])
-	pygame.draw.rect(display, RED, [p2.xPos, p2.yPos, 10, 10])
+
+# temporary rendering method, will be changed
+def renderPlayer(player, display):
+	if player.playerGameSide == 1:
+		pygame.draw.rect(display, BLACK, [player.xPos, player.yPos, player.width, player.height])
+		if player.isAttacking == True:
+			coord = player.getHitBox()
+			hitboxHeight = coord[1].y - coord[0].y
+			hitboxWidth = coord[1].x - coord[0].x
+			pygame.draw.rect(display, BLUE, [coord[0].x, coord[0].y, hitboxWidth, hitboxHeight])
+	if player.playerGameSide == 2:
+		pygame.draw.rect(display, RED, [player.xPos, player.yPos, player.width, player.height])
+
 
 clock = pygame.time.Clock()
-
 pygame.init()
-
-
-
 
 #set display surface, only 1 is allowed by SDL
 gameDisplay = pygame.display.set_mode((800,600))
@@ -51,17 +59,16 @@ while not gameExit:
 
 	p1Action = inputHandler.handlePlayerInputs(events, keys, p1.playerGameSide, p1.playerLocationSide)
 	p2Action = inputHandler.handlePlayerInputs(events, keys, p2.playerGameSide, p2.playerLocationSide)
-
+	# print(p1Action)
 	collisionResult = updater.hurtBoxCollisionDetection(p1, p2)
 
 	updater.update(p1, p1Action, collisionResult)
 	updater.update(p2, p2Action, collisionResult)
 
-
-
-
-	# update(p1, p2, p1Actions, p2Actions)
-	render(p1, p2, gameDisplay)
+	# TODO: include game UI into renderDisplay and change name of function
+	renderDisplay(gameDisplay)
+	renderPlayer(p1, gameDisplay)
+	renderPlayer(p2, gameDisplay)
 
 	pygame.display.update()
 	pygame.event.pump()
