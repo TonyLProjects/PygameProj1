@@ -2,6 +2,7 @@ import sys
 import os
 import pygame
 # might not be necessary to put these functions into a separate file
+# maybe change the name of file to something else than updater
 
 
 # checks a player's hitbox collided with hurtbox 
@@ -12,16 +13,31 @@ def hurtBoxCollisionDetection(player1, player2):
 		p1Hit = False
 		p2Hit = False
 		p1HitBox = player1.getHitBox()			# these should be vector2d objects
+		# print(p1HitBox.max.x, p1HitBox.max.y)
 		p1HurtBox = player1.getHurtBox()
 		p2HitBox = player2.getHitBox()
 		p2HurtBox = player2.getHurtBox()
-		# print(p1HitBox[0].x)
-		# print(p1HurtBox)
-		# print(p2HitBox)
-		# print(p2HurtBox)
-		# check collision
+		p2Hit = checkRectCollision(p1HitBox, p2HurtBox)
+		p1Hit = checkRectCollision(p2HitBox, p1HurtBox)
 
-		# return either p1Hit or p2Hit
+		if p2Hit == True:
+			print(p2Hit)
+		if p1Hit == True:
+			print(p1Hit)
+
+# maybe this should be helper method in squareCord2d class
+def checkRectCollision(coord1, coord2):
+	if coord1.max.x < coord2.min.x:
+		return False
+	if coord1.min.x > coord2.max.x:
+		return False
+	if coord1.max.y < coord2.min.y:
+		return False
+	if coord1.min.y > coord2.max.y:
+		return False
+	return True
+
+	
 
 # TODO: restructure logic here
 # function updates 1 player

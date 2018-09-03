@@ -1,0 +1,11 @@
+this is a list of problems/bugs
+
+forward/backward jump detection works consistently only if directional key is held down before jump is pressed
+	solution unclear
+
+Crouch handling
+	crouch action currently incorrectly handled
+	crouch input handling is not consistent with input handling of other inputs
+		reset crouch is activated upon release of crouch key, but not sure how to detect the release input
+		current inplementation resets crouch between every ticks, if crouch is still held down, then crouch is re-initialized for the next tick
+			end result is same as checking for key up, but implementation not as elegant

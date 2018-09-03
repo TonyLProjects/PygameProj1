@@ -2,6 +2,7 @@ import sys
 import os
 
 from vector2d import vector2d
+from squareCoord2d import squareCoord2d
 from constants import *
 # initialize attributes based on character class
 
@@ -11,12 +12,14 @@ class Player:
 	height = 30
 	width = 10
 	forwardVelocity = 2
-	backwardVelocity = 1
+	backwardVelocity = 2
 
 	
 #player state related variable attributes
 #maybe wrap these in a datatype
 	canInitAction = True
+	recoveryFrames = 0
+
 	isBlocking = False
 	isAirborne = False
 	isCrouching = False
@@ -33,13 +36,19 @@ class Player:
 	yPos = 0
 	xVelocity = 0
 	yVelocity = 0
-	playerLocationSide = 0
+
+	# 0: facing right, 1: facing left
+	# only changed when jumping over the other player
+	playerFacingSide = 0
 
 
 	def __init__(self, characterClass, playerGameSide):
 		self.characterClass = characterClass
 		self.playerGameSide = playerGameSide
-		self.playerLocationSide = playerGameSide
+		if playerGameSide == 1:
+			playerFacingSide = 0
+		else:
+			playerFacingSide = 1
 		if playerGameSide == 1:
 			self.xPos = DEFAULT_P1_XPOS
 			self.yPos = DEFAULT_P1_YPOS
@@ -83,6 +92,9 @@ class Player:
 				self.yVelocity = 0
 				self.yPos = GAMEFLOOR
 				self.isAirborne = False	
+				# init jump recovery frames
+				self.canInitAction = False
+				self.recoveryFrames = 3
 
 		if self.isAttacking == True:
 			self.attackFrame -= 1
@@ -93,6 +105,13 @@ class Player:
 
 		if self.isHitStunned == True:
 			pass
+
+		# ticking recovery frames
+		if self.recoveryFrames != 0:
+			self.recoveryFrames -= 1
+			if self.recoveryFrames == 0:
+				self.canInitAction = True
+
 
 
 
@@ -111,6 +130,7 @@ class Player:
 
 # make this into struct?
 	def punch(self):
+		print("punch is called")
 		self.isAttacking = True
 		self.canInitAction = False
 		self.attackType = "punch"
@@ -123,9 +143,10 @@ class Player:
 
 	# TODO: Account for crouch
 	def getHurtBox(self):
-		minHurtBoxCord = vector2d(self.xPos, self.yPos)
-		maxHurtBoxCord = vector2d(self.xPos + self.width, self.yPos + self.height)
-		return (minHurtBoxCord, maxHurtBoxCord)
+		minHurtBoxCoord = vector2d(self.xPos, self.yPos)
+		maxHurtBoxCoord = vector2d(self.xPos + self.width, self.yPos + self.height)
+		hurtboxCoord = squareCoord2d(minHurtBoxCoord, maxHurtBoxCoord)
+		return hurtboxCoord
 
 	# hitbox does not always exist
 	# need to take in move type as function and check frame count. return hitbox according to move state in the specific frame
@@ -136,9 +157,13 @@ class Player:
 		if self.isAttacking == True and self.alreadyHit == False:
 			if self.attackType == "punch":
 				# temporary math, change later
-				minHitBoxCord = vector2d(self.xPos + (self.width/2), self.yPos + (self.height/3))
-				maxHitBoxCord = vector2d(self.xPos + (self.width/2)+20, self.yPos + (self.height/3)+5)
-				return (minHitBoxCord, maxHitBoxCord)
+				minHitBoxCoord = vector2d(self.xPos + (self.width/2), self.yPos + (self.height/3))
+				maxHitBoxCoord = vector2d(self.xPos + (self.width/2)+20, self.yPos + (self.height/3)+5)
+				hitBoxCoord = squareCoord2d(minHitBoxCoord, maxHitBoxCoord)
+				return hitBoxCoord
+
+
 		# players can never have coord of 0,0 since it's top left of screen
-		noHitBoxRet = vector2d(0,0)		
-		return (noHitBoxRet, noHitBoxRet)
+		noHitBoxRet = vector2d(0,0)	
+		noHitbox = squareCoord2d(noHitBoxRet, noHitBoxRet)
+		return noHitbox

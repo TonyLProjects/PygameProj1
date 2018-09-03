@@ -15,17 +15,24 @@ def renderDisplay(display):
 	gameDisplay.fill(WHITE)	
 
 # temporary rendering method, will be changed
+# TODO: move these to the player class since need side detection
 def renderPlayer(player, display):
+		drawPlayerBody(player, display)
+		drawPlayerAttack(player, display)
+
+def drawPlayerBody(player, display):
 	if player.playerGameSide == 1:
 		pygame.draw.rect(display, BLACK, [player.xPos, player.yPos, player.width, player.height])
-		if player.isAttacking == True:
-			coord = player.getHitBox()
-			hitboxHeight = coord[1].y - coord[0].y
-			hitboxWidth = coord[1].x - coord[0].x
-			pygame.draw.rect(display, BLUE, [coord[0].x, coord[0].y, hitboxWidth, hitboxHeight])
-	if player.playerGameSide == 2:
+	else:
 		pygame.draw.rect(display, RED, [player.xPos, player.yPos, player.width, player.height])
 
+
+def drawPlayerAttack(player, display):
+	if player.isAttacking == True:
+		coord = player.getHitBox()
+		hitboxHeight = coord.max.y - coord.min.y
+		hitboxWidth = coord.max.x - coord.min.x
+		pygame.draw.rect(display, BLUE, [coord.min.x, coord.min.y, hitboxWidth, hitboxHeight])
 
 clock = pygame.time.Clock()
 pygame.init()
@@ -47,8 +54,6 @@ while not gameExit:
 	currentPressedKeys = []
 	events = pygame.event.get()
 	for event in events:
-
-
 		if event.type == pygame.QUIT:
 			gameExit = True
 	# action events handled with KEYDOWN events
@@ -57,9 +62,11 @@ while not gameExit:
 	# movement handled with pressed keys 
 	keys = pygame.key.get_pressed()
 
-	p1Action = inputHandler.handlePlayerInputs(events, keys, p1.playerGameSide, p1.playerLocationSide)
-	p2Action = inputHandler.handlePlayerInputs(events, keys, p2.playerGameSide, p2.playerLocationSide)
+	p1Action = inputHandler.handlePlayerInputs(events, keys, p1.playerGameSide, p1.playerFacingSide)
+	p2Action = inputHandler.handlePlayerInputs(events, keys, p2.playerGameSide, p2.playerFacingSide)
 	# print(p1Action)
+	# print(p2Action)
+
 	collisionResult = updater.hurtBoxCollisionDetection(p1, p2)
 
 	updater.update(p1, p1Action, collisionResult)
