@@ -11,8 +11,9 @@ from constants import *
 # 		actions will come from: buffer, attack, directional imput
 
 
-# TODO: implement input buffer -> make a key state manager object
-# 		include filter function for p2
+# TODO: 
+#	implement input buffer
+#	REFACTOR THIS CODE
 def handlePlayerInputs(events, pressInputs, playerGameSide, playerFacingSide):
 
 	pressedKeys = filterPressInputs(pressInputs, playerGameSide, playerFacingSide)
