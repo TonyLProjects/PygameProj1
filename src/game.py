@@ -31,9 +31,11 @@ def drawPlayerAttack(player, display):
 	if player.isAttacking == True:
 		coord = player.getHitBox()
 		hitboxHeight = coord.max.y - coord.min.y
-		hitboxWidth = coord.max.x - coord.min.x
+		if player.playerFacingSide == 0:
+			hitboxWidth = coord.max.x - coord.min.x
+		else:
+			hitboxWidth = 20
 		pygame.draw.rect(display, BLUE, [coord.min.x, coord.min.y, hitboxWidth, hitboxHeight])
-
 clock = pygame.time.Clock()
 pygame.init()
 
@@ -47,6 +49,8 @@ p1 = player.Player("default class", 1)
 p2 = player.Player("default class", 2)
 # p1InputBuffer = inputBuffer()
 # p2InputBuffer = inputBuffer()
+
+
 
 
 while not gameExit:
@@ -67,7 +71,15 @@ while not gameExit:
 	# print(p1Action)
 	# print(p2Action)
 
+	if p1.sideSwitchRequest == False and p2.sideSwitchRequest == False:
+		# print("switch request is both false ")
+		playerSideSwitchResult = updater.playerSideSwitchDetection(p1, p2)
 	collisionResult = updater.hurtBoxCollisionDetection(p1, p2)
+
+	if playerSideSwitchResult == True:
+		p1.initSideSwitch()
+		p2.initSideSwitch()
+		playerSideSwitchResult = False
 
 	updater.update(p1, p1Action, collisionResult)
 	updater.update(p2, p2Action, collisionResult)

@@ -1,9 +1,9 @@
 import sys
 import os
 import pygame
-# might not be necessary to put these functions into a separate file
 # maybe change the name of file to something else than updater
-
+# TODO: change file name
+# updater is no longer appropriate name for the file
 
 # checks a player's hitbox collided with hurtbox 
 def hurtBoxCollisionDetection(player1, player2):
@@ -54,6 +54,8 @@ def update(player, action, hurtBoxCollisionResult):
 	# if hurtBoxCollisionResult.playerHit == "p2Hit":
 	# 	pass
 
+
+
 	if isActionValid(player, action) != "noAction":
 		player.initializeAction(action)
 	else:
@@ -80,3 +82,14 @@ def isActionValid(player, action):
 		else:
 			return "noAction"
 	return action
+
+def playerSideSwitchDetection(player1, player2):
+	if player1.xPos > player2.xPos and player1.playerFacingSide == 0:
+			print('swap detected')
+			return True
+			# request side switch
+	if player1.xPos < player2.xPos and player1.playerFacingSide == 1:
+			print('swap detected')
+			return True
+			# request side switch
+	return False

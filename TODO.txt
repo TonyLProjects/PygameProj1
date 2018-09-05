@@ -1,5 +1,7 @@
 TODO:
 
+punch animation
+
 IMPORTANT:
 	refactor inputhandler.py 
 

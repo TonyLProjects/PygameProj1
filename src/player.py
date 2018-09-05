@@ -11,8 +11,8 @@ class Player:
 	playerGameSide = 0
 	height = 30
 	width = 10
-	forwardVelocity = 2
-	backwardVelocity = 2
+	forwardVelocity = 5
+	backwardVelocity = 1
 
 	
 #player state related variable attributes
@@ -40,15 +40,16 @@ class Player:
 	# 0: facing right, 1: facing left
 	# only changed when jumping over the other player
 	playerFacingSide = 0
+	sideSwitchRequest = False
 
 
 	def __init__(self, characterClass, playerGameSide):
 		self.characterClass = characterClass
 		self.playerGameSide = playerGameSide
 		if playerGameSide == 1:
-			playerFacingSide = 0
+			self.playerFacingSide = 0
 		else:
-			playerFacingSide = 1
+			self.playerFacingSide = 1
 		if playerGameSide == 1:
 			self.xPos = DEFAULT_P1_XPOS
 			self.yPos = DEFAULT_P1_YPOS
@@ -65,9 +66,16 @@ class Player:
 	# validity of action is handled in another function
 	def initializeAction(self, action):
 		if action == "forward":
-			self.xPos += self.forwardVelocity
+			if self.playerFacingSide == 0:
+				self.xPos += self.forwardVelocity
+			else:
+				self.xPos -= self.forwardVelocity
 		if action == "backward":
-			self.xPos -= self.backwardVelocity
+			if self.playerFacingSide == 0:	
+				self.xPos -= self.backwardVelocity
+			else:
+				self.xPos += self.backwardVelocity
+
 		if action == "crouch":
 			self.isCrouching = True
 			self.height = 15
@@ -111,7 +119,10 @@ class Player:
 			self.recoveryFrames -= 1
 			if self.recoveryFrames == 0:
 				self.canInitAction = True
+		if self.sideSwitchRequest == True:
+			if self.isAirborne == False and self.isAttacking == False:
 
+				self.sideSwitch()
 
 
 
@@ -121,11 +132,17 @@ class Player:
 		self.isAirborne = True
 	def forwardJump(self):
 		self.yVelocity = -15
-		self.xVelocity = self.forwardVelocity
+		if self.playerFacingSide == 0:
+			self.xVelocity = self.forwardVelocity
+		else:
+			self.xVelocity = -self.forwardVelocity
 		self.isAirborne = True
 	def backwardJump(self):
 		self.yVelocity = -15
-		self.xVelocity = -self.backwardVelocity
+		if self.playerFacingSide == 0:
+			self.xVelocity = -self.backwardVelocity
+		else:
+			self.xVelocity = self.backwardVelocity
 		self.isAirborne = True
 
 # make this into struct?
@@ -156,10 +173,17 @@ class Player:
 	def getHitBox(self):
 		if self.isAttacking == True and self.alreadyHit == False:
 			if self.attackType == "punch":
+				if self.playerFacingSide == 0:
 				# temporary math, change later
-				minHitBoxCoord = vector2d(self.xPos + (self.width/2), self.yPos + (self.height/3))
-				maxHitBoxCoord = vector2d(self.xPos + (self.width/2)+20, self.yPos + (self.height/3)+5)
+					minHitBoxCoord = vector2d(self.xPos + (self.width/2), self.yPos + (self.height/3))
+					maxHitBoxCoord = vector2d(self.xPos + (self.width/2)+20, self.yPos + (self.height/3)+5)
+				else:
+					minHitBoxCoord = vector2d(self.xPos - (self.width/2)-20, self.yPos + (self.height/3))
+					maxHitBoxCoord = vector2d(self.xPos - (self.width/2), self.yPos + (self.height/3+5))
 				hitBoxCoord = squareCoord2d(minHitBoxCoord, maxHitBoxCoord)
+				print(hitBoxCoord.max.x)
+				print(hitBoxCoord.min.x)
+				print(self.xPos)
 				return hitBoxCoord
 
 
@@ -167,3 +191,13 @@ class Player:
 		noHitBoxRet = vector2d(0,0)	
 		noHitbox = squareCoord2d(noHitBoxRet, noHitBoxRet)
 		return noHitbox
+
+	def initSideSwitch(self):
+		self.sideSwitchRequest = True
+
+	def sideSwitch(self):
+		self.playerFacingSide = (self.playerFacingSide + 1) % 2
+		self.sideSwitchRequest = False
+		print(self.playerGameSide)
+		print("executing side switch")
+
