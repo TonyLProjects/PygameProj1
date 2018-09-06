@@ -211,3 +211,100 @@ attack psudo code:
 	in render:
 		read player move status and frame counter
 			draw body part according to these info
+
+
+
+list of special inputs:
+	Quarter circle forward/backward
+	half circle forward/backward
+	full circle forward/backward
+	Dragon Punch forward/backward
+	Charge inputs
+	dash
+
+options:
+	1:
+	make input buffer a list of input structs
+	remove input from queue when frameSinceCreation exceed a limit
+
+		input structs definition:
+			int frameSinceCreation
+			string input
+
+		checking special moves would require checking the entire buffer every time
+
+	2:
+	dequeue only if buffer exceed size limit or
+	if input is accepted and used (regardless of initialized or not)
+		checking still cycles through the entire buffer
+
+	3:
+	dequeue if no previous inputs are directional, 
+
+	if input is directional:
+		check flag = 1
+		enqueue()
+
+	4:
+	check inputs in reverse:
+		not intuitive to implement
+
+	5:
+	special input always start with direction (except hold)
+
+
+start from the end
+	check latest frame timer
+	if directional:
+		check dash
+	if isAction:
+		check special move in reverse
+
+		detection buffer[0] = inputBuffer[endOfQueue]
+		if latest isAction:
+			if prev isAction and time is recent:
+				detectionBuffer[0] = inputBuffer[prev]
+			if prev isDirection and time is recent:
+				if prev match any of the accepted sequence:
+### Do this
+Primitive implementation:
+	Psudo code:
+		start from end of buffer:
+			does last x inputs match perfectly to any of the accepted sequence of inputs:
+			if yes:
+				init detected move
+			dequeue end of buffer until buffer is within size limit
+
+	directional input error tolerance need to be hard coded
+	but it works
+	does not handle multiple inputs in the same frame
+###
+
+
+	for hold action:
+	Primitive implementation:
+		holdBuffer[? size]
+		if latest input.type == release:
+			scan whole array:
+			if inputbBuffer[i].type == keydown:
+				stop scanning
+			else: if inputBuffer[i].key == latest input.key:
+				holdBuffer.append(inputBuffer[i])
+		if holdBuffer.size > accepted hold timer (or if the press action is early enough):
+			init hold special move
+
+	Problem:
+		hold is reset when hit by attacks so the states is coupled with other elements than input.
+
+
+
+
+
+
+
+
+
+
+
+			
+

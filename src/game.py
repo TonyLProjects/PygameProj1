@@ -2,8 +2,9 @@ import sys
 import os
 import pygame
 
-# import inputBuffer
-import actionHandler
+dirPath = os.path.dirname(os.path.realpath(__file__))	# not sure if this is the proper way to import
+sys.path.append(dirPath + '/inputBuffer')
+
 import inputHandler
 import player
 # importing keybinding dictionary
@@ -13,6 +14,8 @@ import Keybindings as keybinds
 from vector2d import vector2d
 from hitResult import hitResult
 from playerAction import playerAction
+
+from inputBuffer import inputBuffer
 
 
 from constants import *
@@ -38,7 +41,7 @@ def checkRectCollision(coord1, coord2):
 		return False
 	return True
 
-# change the use of hitResult object init as struct, probably not efficient
+# TODO: check if using object as struct is efficient
 def hurtBoxCollisionDetection(player1, player2):
 	if player1.isAttacking == False and player2.isAttacking == False:
 		return hitResult(False, False, player1.attackType, player2.attackType)
@@ -53,13 +56,10 @@ def hurtBoxCollisionDetection(player1, player2):
 		p1Hit = checkRectCollision(p2HitBox, p1HurtBox)
 		moveThatHitP1 = player2.attackType
 		moveThatHitP2 = player1.attackType
-		print("inside collision detection: ", p1Hit, p2Hit, moveThatHitP1, moveThatHitP2)
 	return hitResult(p1Hit, p2Hit, moveThatHitP1, moveThatHitP2)
 
 # does not need to account for multiple hit by the same move since hitbox will disapear when hit lands
 def handlePlayerAction(player, action, hitResult):
-	if player.isAttacking != False:
-		print("inside handlePlayerAction: ", hitResult.p1HitResult, hitResult.p2HitResult, hitResult.moveThatHitP1, hitResult.moveThatHitP2)
 	if player.playerGameSide == 1 and hitResult.p1HitResult == True:
 		return playerAction("hitstun", hitResult.moveThatHitP1)
 	if player.playerGameSide == 1 and hitResult.p2HitResult == True:
@@ -84,7 +84,7 @@ def isActionValid(player, action):
 			return "noAction"
 	return action
 
-# parameter "action" is an array with [0] containing string of move type and [1] containing move hit/landed. 
+# parameter "action" is an array witFh [0] containing string of move type and [1] containing move hit/landed. 
 # [1] contains "null" if no hit landed
 def initFinalAction(player, action):
 	if action.moveType != "noAction":
@@ -128,7 +128,6 @@ def drawPlayerAttack(player, display):
 
 
 
-
 clock = pygame.time.Clock()
 pygame.init()
 
@@ -140,8 +139,8 @@ gameExit = False
 #initialize players and other modules
 p1 = player.Player("default class", 1)
 p2 = player.Player("default class", 2)
-# p1InputBuffer = inputBuffer()
-# p2InputBuffer = inputBuffer()
+p1InputBuffer = inputBuffer(INPUT_BUFFER_SIZE)
+p2InputBuffer = inputBuffer(INPUT_BUFFER_SIZE)
 
 
 
@@ -165,8 +164,8 @@ while not gameExit:
 		p1.initSideSwitch()
 		p2.initSideSwitch()
 		playerSideSwitchResult = False
-	p1ActionFromInput = inputHandler.handlePlayerInputs(events, keys, p1.playerGameSide, p1.playerFacingSide)
-	p2ActionFromInput = inputHandler.handlePlayerInputs(events, keys, p2.playerGameSide, p2.playerFacingSide)
+	p1ActionFromInput = inputHandler.handlePlayerInputs(events, keys, p1, p1InputBuffer)
+	p2ActionFromInput = inputHandler.handlePlayerInputs(events, keys, p2, p2InputBuffer)
 	collisionResult = hurtBoxCollisionDetection(p1, p2)
 	p1ActionToInit = handlePlayerAction(p1, p1ActionFromInput, collisionResult)
 	p2ActionToInit = handlePlayerAction(p2, p2ActionFromInput, collisionResult)

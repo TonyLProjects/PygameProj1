@@ -11,17 +11,49 @@ from constants import *
 # 		actions will come from: buffer, attack, directional imput
 
 
+def insertToBuffer(pressedKeys, inputBuffer):
+	if len(pressedKeys) == 0:
+		inputBuffer.previousInput = ""
+		return
+
+	if len(pressedKeys) == 1:
+		if pressedKeys[0] == "crouch":
+			inputBuffer.enqueue("down")
+			return
+		if pressedKeys[0] == "jump":
+			inputBuffer.enqueue("jump")
+			return
+		inputBuffer.enqueue(pressedKeys[0])
+		return
+	if "forward" in pressedKeys:
+		if "crouch" in pressedKeys:
+			inputBuffer.enqueue("forwardDown")
+			return
+		if "jump" in pressedKeys:
+			inputBuffer.enqueue("forwardUp")
+			return
+	if "backward" in pressedKeys:
+		if "crouch" in pressedKeys:
+			inputBuffer.enqueue("backwardDown")
+			return
+		if "jump" in pressedKeys:
+			inputBuffer.enqueue("backwardUp")
+			return
+
 # TODO: 
 #	implement input buffer
 #	REFACTOR THIS CODE
-def handlePlayerInputs(events, pressInputs, playerGameSide, playerFacingSide):
+def handlePlayerInputs(events, pressInputs, player, inputBuffer):
 
-	pressedKeys = filterPressInputs(pressInputs, playerGameSide, playerFacingSide)
-	keyDownInputs = filterKeyDownInputs(events, playerGameSide, playerFacingSide)
-	playerAction = processAttack(keyDownInputs, pressedKeys, playerFacingSide)
+	pressedKeys = filterPressInputs(pressInputs, player.playerGameSide, player.playerFacingSide)
+	insertToBuffer(pressedKeys, inputBuffer)
+	inputBuffer.printBuffer()
+
+	keyDownInputs = filterKeyDownInputs(events, player.playerGameSide, player.playerFacingSide)
+	playerAction = processAttack(keyDownInputs, pressedKeys, player.playerFacingSide)
 
 	if playerAction == "noAction":
-		playerAction = processMovement(pressedKeys, playerFacingSide)
+		playerAction = processMovement(pressedKeys, player.playerFacingSide)
 
 
 	return playerAction

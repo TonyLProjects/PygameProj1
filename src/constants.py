@@ -17,6 +17,8 @@ DEFAULT_P1_YPOS = GAMEFLOOR
 DEFAULT_P2_XPOS = 600
 DEFAULT_P2_YPOS = GAMEFLOOR
 
+INPUT_BUFFER_SIZE = 30
+
 
 # p1Keybind = {	
 # 			"punch":pygame.K_j,

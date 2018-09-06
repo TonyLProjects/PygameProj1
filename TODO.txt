@@ -3,8 +3,13 @@ TODO:
 
 
 Refactor inputhandler.py 
+naming cap consistency
 
-player landing hit interaction/frame timer
+player landing frame advantage
+generalize attack moveset properties
+	initiator recovery frames
+	receiver stun frames
+
 Block
 Movement collision
 Input buffer
