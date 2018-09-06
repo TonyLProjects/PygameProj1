@@ -1,31 +1,27 @@
 TODO:
 
-punch animation
 
-IMPORTANT:
-	refactor inputhandler.py 
+Get rid of updater.py
+Refactor inputhandler.py 
 
-	Players general 
-		player side location detection
-			-am i left or right to the other player
-
-
-
-
-	System:
-		frame counter system
-		player.tick(self)
-			apply gravity if airborne
-			if airborne is true and player is on ground
-				slef.airborne = false
+Hitstun
+Block
+Movement collision
+Input buffer
+Sprite loading
+Animation?
+More moves
 
 
 
+game UI
+	hp bars
+	timer
 
-	interaction:
-		game UI
-			hp bars
-			timer
 
-		movement collision
 
+Done:
+	Side detection
+	hitbox/hurtbox collision
+	input handling + action calling + movement handling
+	jump

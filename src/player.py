@@ -63,7 +63,8 @@ class Player:
 
 
 ###class methods
-	# validity of action is handled in another function
+
+	# validity and action priority is handled in another function
 	def initializeAction(self, action):
 		if action == "forward":
 			if self.playerFacingSide == 0:
@@ -79,6 +80,7 @@ class Player:
 		if action == "crouch":
 			self.isCrouching = True
 			self.height = 15
+			self.yPos = GAMEFLOOR+15
 		if action == "verticalJump":
 			self.verticalJump()
 		if action == "forwardJump":
@@ -87,7 +89,6 @@ class Player:
 			self.backwardJump()
 		if action == "punch":
 			self.punch()
-			pass
 
 
 	def tick(self):
@@ -121,7 +122,6 @@ class Player:
 				self.canInitAction = True
 		if self.sideSwitchRequest == True:
 			if self.isAirborne == False and self.isAttacking == False:
-
 				self.sideSwitch()
 
 
@@ -147,7 +147,6 @@ class Player:
 
 # make this into struct?
 	def punch(self):
-		print("punch is called")
 		self.isAttacking = True
 		self.canInitAction = False
 		self.attackType = "punch"
@@ -156,6 +155,7 @@ class Player:
 	def resetCrouch(self):
 		self.isCrouching = False
 		self.height = 30
+		self.yPos = GAMEFLOOR
 
 
 	# TODO: Account for crouch
@@ -178,12 +178,9 @@ class Player:
 					minHitBoxCoord = vector2d(self.xPos + (self.width/2), self.yPos + (self.height/3))
 					maxHitBoxCoord = vector2d(self.xPos + (self.width/2)+20, self.yPos + (self.height/3)+5)
 				else:
-					minHitBoxCoord = vector2d(self.xPos - (self.width/2)-20, self.yPos + (self.height/3))
-					maxHitBoxCoord = vector2d(self.xPos - (self.width/2), self.yPos + (self.height/3+5))
+					minHitBoxCoord = vector2d(self.xPos + (self.width/2)-20, self.yPos + (self.height/3))
+					maxHitBoxCoord = vector2d(self.xPos + (self.width/2), self.yPos + (self.height/3)+5)
 				hitBoxCoord = squareCoord2d(minHitBoxCoord, maxHitBoxCoord)
-				print(hitBoxCoord.max.x)
-				print(hitBoxCoord.min.x)
-				print(self.xPos)
 				return hitBoxCoord
 
 
@@ -198,6 +195,5 @@ class Player:
 	def sideSwitch(self):
 		self.playerFacingSide = (self.playerFacingSide + 1) % 2
 		self.sideSwitchRequest = False
-		print(self.playerGameSide)
-		print("executing side switch")
+
 

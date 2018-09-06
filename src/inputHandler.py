@@ -80,7 +80,6 @@ def filterKeyDownInputs(events, playerGameSide, playerFacingSide):
 
 
 
-# 	
 def processAttack(keyDownInputs, pressedKeys, playerFacingSide):
 
 
