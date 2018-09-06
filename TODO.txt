@@ -1,27 +1,38 @@
 TODO:
 
 
-Get rid of updater.py
+
 Refactor inputhandler.py 
 
-Hitstun
+player landing hit interaction/frame timer
 Block
 Movement collision
 Input buffer
 Sprite loading
 Animation?
-More moves
+More and better moves
+better jump motion
 
-
-
-game UI
+game UI:
 	hp bars
 	timer
 
 
 
-Done:
-	Side detection
+
+
+
+Features done:
+	side switch detection
+	side switch initialization
 	hitbox/hurtbox collision
-	input handling + action calling + movement handling
+	input filter
+	action calling
+	action filter
+	action initialization
 	jump
+	ghetto implementation of crouch
+	player hitstun interaction/frame timer
+
+Code refactored:
+	got rid of updater.py

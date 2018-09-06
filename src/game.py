@@ -12,6 +12,7 @@ import Keybindings as keybinds
 # importing helper structures
 from vector2d import vector2d
 from hitResult import hitResult
+from playerAction import playerAction
 
 
 from constants import *
@@ -40,7 +41,7 @@ def checkRectCollision(coord1, coord2):
 # change the use of hitResult object init as struct, probably not efficient
 def hurtBoxCollisionDetection(player1, player2):
 	if player1.isAttacking == False and player2.isAttacking == False:
-		return hitResult(False, False)
+		return hitResult(False, False, player1.attackType, player2.attackType)
 	else:
 		p1Hit = False
 		p2Hit = False
@@ -50,17 +51,26 @@ def hurtBoxCollisionDetection(player1, player2):
 		p2HurtBox = player2.getHurtBox()
 		p2Hit = checkRectCollision(p1HitBox, p2HurtBox)
 		p1Hit = checkRectCollision(p2HitBox, p1HurtBox)
-	return hitResult(p1Hit, p2Hit)
+		moveThatHitP1 = player2.attackType
+		moveThatHitP2 = player1.attackType
+		print("inside collision detection: ", p1Hit, p2Hit, moveThatHitP1, moveThatHitP2)
+	return hitResult(p1Hit, p2Hit, moveThatHitP1, moveThatHitP2)
 
-def handlePlayerAction(player, action, hurtBoxCollisionResult):
-	# if hurtBoxCollisionResult.playerHit == "p1Hit":
-	# 	# init hitstun 
-	# 	pass
-	# if hurtBoxCollisionResult.playerHit == "p2Hit":
-	# 	pass
-
+# does not need to account for multiple hit by the same move since hitbox will disapear when hit lands
+def handlePlayerAction(player, action, hitResult):
+	if player.isAttacking != False:
+		print("inside handlePlayerAction: ", hitResult.p1HitResult, hitResult.p2HitResult, hitResult.moveThatHitP1, hitResult.moveThatHitP2)
+	if player.playerGameSide == 1 and hitResult.p1HitResult == True:
+		return playerAction("hitstun", hitResult.moveThatHitP1)
+	if player.playerGameSide == 1 and hitResult.p2HitResult == True:
+		return playerAction("landedHit", hitResult.moveThatHitP2)
+	if player.playerGameSide == 2 and hitResult.p2HitResult == True:
+		return playerAction("hitstun", hitResult.moveThatHitP2)
+	if player.playerGameSide == 2 and hitResult.p1HitResult == True:
+		return playerAction("landedHit", hitResult.moveThatHitP1)
 	if isActionValid(player, action) != "noAction":
-		return action
+		return playerAction(action, "NULL")
+	return playerAction("noAction", "NULL")
 
 def isActionValid(player, action):
 	if player.canInitAction == False:
@@ -74,11 +84,13 @@ def isActionValid(player, action):
 			return "noAction"
 	return action
 
+# parameter "action" is an array with [0] containing string of move type and [1] containing move hit/landed. 
+# [1] contains "null" if no hit landed
 def initFinalAction(player, action):
-	if action != "noAction":
+	if action.moveType != "noAction":
 		player.initializeAction(action)
 	elif player.isCrouching: 
-		player.resetCrouch
+		player.resetCrouch()
 
 
 # temporary rendering functions
@@ -93,9 +105,15 @@ def renderPlayer(player, display):
 
 def drawPlayerBody(player, display):
 	if player.playerGameSide == 1:
-		pygame.draw.rect(display, BLACK, [player.xPos, player.yPos, player.width, player.height])
+		playerColor = BLACK
+		if player.isHitStunned:
+			playerColor = GREEN
+		pygame.draw.rect(display, playerColor, [player.xPos, player.yPos, player.width, player.height])
 	else:
-		pygame.draw.rect(display, RED, [player.xPos, player.yPos, player.width, player.height])
+		playerColor = RED
+		if player.isHitStunned:
+			playerColor = GREEN
+		pygame.draw.rect(display, playerColor, [player.xPos, player.yPos, player.width, player.height])
 
 
 def drawPlayerAttack(player, display):
@@ -150,8 +168,6 @@ while not gameExit:
 	p1ActionFromInput = inputHandler.handlePlayerInputs(events, keys, p1.playerGameSide, p1.playerFacingSide)
 	p2ActionFromInput = inputHandler.handlePlayerInputs(events, keys, p2.playerGameSide, p2.playerFacingSide)
 	collisionResult = hurtBoxCollisionDetection(p1, p2)
-	print("p1 hit result", collisionResult.p1HitResult)
-	print("p2 hit result", collisionResult.p2HitResult)
 	p1ActionToInit = handlePlayerAction(p1, p1ActionFromInput, collisionResult)
 	p2ActionToInit = handlePlayerAction(p2, p2ActionFromInput, collisionResult)
 	initFinalAction(p1, p1ActionToInit)

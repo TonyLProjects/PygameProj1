@@ -8,7 +8,7 @@ from constants import *
 
 class Player:
 #player constant attributes
-	playerGameSide = 0
+	playerGameSide = 0 			# 1 for player 1, 2 for player 2
 	height = 30
 	width = 10
 	forwardVelocity = 5
@@ -18,15 +18,17 @@ class Player:
 #player state related variable attributes
 #maybe wrap these in a datatype
 	canInitAction = True
-	recoveryFrames = 0
+	recoveryFrames = 0	# used for jump and dash
+	hitstunFrames = 0
 
 	isBlocking = False
 	isAirborne = False
 	isCrouching = False
 	isHitStunned = False
 
+
 	isAttacking = False
-	alreadyHit = False
+	hitBoxIsActive = False
 	attackType = "notAttacking"
 	attackFrame = 0
 
@@ -66,32 +68,36 @@ class Player:
 
 	# validity and action priority is handled in another function
 	def initializeAction(self, action):
-		if action == "forward":
+		if action.moveType == "forward":
 			if self.playerFacingSide == 0:
 				self.xPos += self.forwardVelocity
 			else:
 				self.xPos -= self.forwardVelocity
-		if action == "backward":
+		if action.moveType == "backward":
 			if self.playerFacingSide == 0:	
 				self.xPos -= self.backwardVelocity
 			else:
 				self.xPos += self.backwardVelocity
-
-		if action == "crouch":
+		if action.moveType == "crouch":
 			self.isCrouching = True
 			self.height = 15
 			self.yPos = GAMEFLOOR+15
-		if action == "verticalJump":
+		if action.moveType == "verticalJump":
 			self.verticalJump()
-		if action == "forwardJump":
+		if action.moveType == "forwardJump":
 			self.forwardJump()
-		if action == "backwardJump":
+		if action.moveType == "backwardJump":
 			self.backwardJump()
-		if action == "punch":
+		if action.moveType == "punch":
 			self.punch()
+		if action.moveType == "hitstun" and self.isBlocking == False:
+			self.initHitstun(action.moveDetail)
+		if action.moveType == "landedHit":
+			self.initLandHitProcessing(action.moveDetail)
 
 
 	def tick(self):
+
 		# update jump frames
 		if self.isAirborne == True:
 			self.yPos += self.yVelocity
@@ -110,10 +116,17 @@ class Player:
 			if self.attackFrame == 0:			# basically self.resetAttackState()
 				self.isAttacking = False
 				self.canInitAction = True
+				self.hitBoxIsActive = False
 				self.attackType = "notAttacking"
 
 		if self.isHitStunned == True:
-			pass
+			# print(self.hitstunFrames)
+			self.hitstunFrames -= 1
+			if self.hitstunFrames == 0:
+				self.isHitStunned = False
+				self.canInitAction = True
+				self.attackType = "notAttacking"
+				self.isAttacking = False
 
 		# ticking recovery frames
 		if self.recoveryFrames != 0:
@@ -124,6 +137,22 @@ class Player:
 			if self.isAirborne == False and self.isAttacking == False:
 				self.sideSwitch()
 
+	# add falling if hit in air
+	def initHitstun(self, moveType):
+		self.canInitAction = False
+		self.isAttacking = False
+		self.attackFrame = 0
+		self.isCrouching = False
+		self.isHitStunned = True
+		# self.isAirborne = ?
+		if moveType == "punch":
+			# generalize this with move dictionary according to move type
+			# eg:
+			# self.hitstunFrames = charType.move.hitstunFrameTimer
+			self.hitstunFrames = 10
+
+	def initLandHitProcessing(self, moveType):
+		pass
 
 
 	def verticalJump(self):
@@ -145,10 +174,10 @@ class Player:
 			self.xVelocity = self.backwardVelocity
 		self.isAirborne = True
 
-# make this into struct?
 	def punch(self):
 		self.isAttacking = True
 		self.canInitAction = False
+		self.hitBoxIsActive = True
 		self.attackType = "punch"
 		self.attackFrame = 10
 
@@ -171,7 +200,7 @@ class Player:
 	# need to account player side
 	# the same thing need to be accounted in rendering
 	def getHitBox(self):
-		if self.isAttacking == True and self.alreadyHit == False:
+		if self.isAttacking == True and self.hitBoxIsActive == True:
 			if self.attackType == "punch":
 				if self.playerFacingSide == 0:
 				# temporary math, change later
