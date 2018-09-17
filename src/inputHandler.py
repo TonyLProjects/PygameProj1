@@ -42,14 +42,20 @@ def insertToBuffer(pressedKeys, inputBuffer):
 
 # TODO: 
 #	implement input buffer
-#	REFACTOR THIS CODE
+#	buffer clear clock
+#	REFACTOR 
+
 def handlePlayerInputs(events, pressInputs, player, inputBuffer):
 
 	pressedKeys = filterPressInputs(pressInputs, player.playerGameSide, player.playerFacingSide)
 	insertToBuffer(pressedKeys, inputBuffer)
-	inputBuffer.printBuffer()
+	# inputBuffer.printBuffer()
+	playerAction = inputBuffer.detectSpecialMove()
+	if playerAction != "noAction" and playerAction != None:
+		return playerAction
 
 	keyDownInputs = filterKeyDownInputs(events, player.playerGameSide, player.playerFacingSide)
+
 	playerAction = processAttack(keyDownInputs, pressedKeys, player.playerFacingSide)
 
 	if playerAction == "noAction":

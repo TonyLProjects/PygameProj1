@@ -1,8 +1,9 @@
 TODO:
 
-
+read up python package and make this project one.
 
 Refactor inputhandler.py 
+	might need redesign such that keydown inputs are not checked
 naming cap consistency
 
 player landing frame advantage
@@ -10,9 +11,9 @@ generalize attack moveset properties
 	initiator recovery frames
 	receiver stun frames
 
+Special move detection from input buffer
 Block
 Movement collision
-Input buffer
 Sprite loading
 Animation?
 More and better moves
@@ -38,6 +39,7 @@ Features done:
 	jump
 	ghetto implementation of crouch
 	player hitstun interaction/frame timer
+	input buffer
 
 Code refactored:
 	got rid of updater.py
