@@ -1,3 +1,3 @@
 # PygameProj1
 
-test message
+run game.py in src to 'play' the game
